@@ -50,8 +50,6 @@ class LoginFragment : Fragment() {
             }
         }
 
-        binding.login.isEnabled = true
-        binding.register.isEnabled = true
         binding.username.addTextChangedListener(afterTextChangedListener)
         binding.password.addTextChangedListener(afterTextChangedListener)
 

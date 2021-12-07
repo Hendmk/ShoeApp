@@ -41,25 +41,16 @@ class NewShoeDetailFragment : Fragment() {
 
 
         binding.addButton.setOnClickListener { view ->
-//            viewModel.addShoe(
-//                Shoe(
-//                    binding.shoeNameEdit.text.toString(),
-//                    binding.shoeSize.text.toString(),
-//                    binding.company.text.toString(),
-//                    binding.shoeDescription.text.toString(),
-//                    mutableListOf("")
-//                )
-//            )
-
             viewModel.addShoe(
                 Shoe(
-                    "Test",
-                    37.0,
-                    "dd",
-                    "dddd",
+                    binding.shoeNameEdit.text.toString(),
+                    binding.shoeSizeEdit.text.toString().toDouble(),
+                    binding.companyEdit.text.toString(),
+                    binding.shoeDescriptionEdit.text.toString(),
                     mutableListOf("")
                 )
             )
+            
             view.findNavController().popBackStack()
         }
     }
