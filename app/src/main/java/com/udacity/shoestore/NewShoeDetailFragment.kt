@@ -11,19 +11,24 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.udacity.shoestore.databinding.FragmentNewShoeDetailBinding
 import com.udacity.shoestore.models.Shoe
+import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 
 class NewShoeDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentNewShoeDetailBinding
-    private  val viewModel: ShoeListViewModel by activityViewModels()
+    private val shoe = Shoe("", 0.0, "", "")
+    private val viewModel: ShoeListViewModel by activityViewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_new_shoe_detail, container, false)
-//        viewModel = ViewModelProvider(this).get(ShoeListViewModel::class.java)
+                DataBindingUtil.inflate(inflater, R.layout.fragment_new_shoe_detail, container, false)
+        binding.shoe = shoe
+        binding.shoeListViewModel = viewModel
         return binding.root
     }
 
@@ -31,33 +36,27 @@ class NewShoeDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setToolbar()
         setListener()
+        startObserving()
+    }
+
+    private fun setToolbar() {
+        val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
+        toolbar.title = getString(R.string.add_new_shoe)
     }
 
     private fun setListener() {
         binding.cancelButton.setOnClickListener { view ->
             view.findNavController().popBackStack()
         }
-
-
-
-        binding.addButton.setOnClickListener { view ->
-            viewModel.addShoe(
-                Shoe(
-                    binding.shoeNameEdit.text.toString(),
-                    binding.shoeSizeEdit.text.toString().toDouble(),
-                    binding.companyEdit.text.toString(),
-                    binding.shoeDescriptionEdit.text.toString(),
-                    mutableListOf("")
-                )
-            )
-            
-            view.findNavController().popBackStack()
-        }
     }
 
-    private fun setToolbar() {
-        val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
-        toolbar.title = getString(R.string.add_new_shoe)
+    private fun startObserving() {
+        viewModel.shoeWasSaved.observe(viewLifecycleOwner, Observer { wasSaved ->
+            if (wasSaved) {
+                findNavController().navigate(NewShoeDetailFragmentDirections.actionNewShoeDetailFragmentToShoeListFragment())
+                viewModel.reSetSaveStatus()
+            }
+        })
     }
 
 }
